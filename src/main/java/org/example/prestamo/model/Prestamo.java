@@ -2,7 +2,7 @@ package org.example.prestamo.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.openxava.annotations.ListProperties;
+import org.openxava.annotations.*;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -14,6 +14,14 @@ import java.util.Collection;
 @Entity
 @Getter
 @Setter
+@EntityValidator(
+        value=org.example.prestamo.validator.PrestamoValidator.class,
+        properties = {
+                @PropertyValue(name="detalle")
+        }
+)
+@View(members ="datosPrestamo[fechaPrestamo,fechaEntrega;" +
+        "estudiante];detalle")
 public class Prestamo extends ID{
 
     private LocalDate fechaPrestamo;
@@ -21,10 +29,11 @@ public class Prestamo extends ID{
     private LocalDate fechaEntrega;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ReferenceView("simple")
     private Estudiante estudiante;
 
     @ElementCollection
-    @ListProperties("detalle.id,libro.nombre,libro.autor")
+    @ListProperties("libro.id,libro.nombre,libro.autor.nombre")
     private Collection<DetallePrestamo> detalle;
 
 }
